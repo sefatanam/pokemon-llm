@@ -219,11 +219,7 @@ export class FilterManager extends EventEmitter {
 
     hasActiveFilters() {
         return this.#filters.types.size > 0 ||
-               this.#filters.generation !== '' ||
-               this.#filters.stats.hp.min > 0 ||
-               this.#filters.stats.hp.max < 255 ||
-               this.#filters.stats.attack.min > 0 ||
-               this.#filters.stats.attack.max < 255;
+               this.#filters.generation !== '';
     }
 
     applyFilters(pokemon) {

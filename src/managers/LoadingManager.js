@@ -14,14 +14,36 @@ export class LoadingManager extends EventEmitter {
     }
 
     #init() {
+        console.log('🔧 LoadingManager #init called');
+        
+        console.log('🔍 Looking for loadingContainer...');
         this.#loadingContainer = document.getElementById('loadingContainer');
+        console.log('loadingContainer found:', !!this.#loadingContainer);
+        
+        console.log('🔍 Looking for errorContainer...');
         this.#errorContainer = document.getElementById('errorContainer');
+        console.log('errorContainer found:', !!this.#errorContainer);
+        
+        console.log('🔍 Looking for noResults...');
         this.#noResultsContainer = document.getElementById('noResults');
+        console.log('noResultsContainer found:', !!this.#noResultsContainer);
+        
+        console.log('🔍 Looking for pokemonGrid...');
         this.#pokemonGrid = document.getElementById('pokemonGrid');
+        console.log('pokemonGrid found:', !!this.#pokemonGrid);
 
         if (!this.#loadingContainer || !this.#errorContainer || !this.#pokemonGrid) {
-            throw new Error('Required UI elements not found');
+            const error = 'Required UI elements not found';
+            console.error('❌ LoadingManager initialization failed:', error);
+            console.error('Missing elements:', {
+                loadingContainer: !this.#loadingContainer,
+                errorContainer: !this.#errorContainer,
+                pokemonGrid: !this.#pokemonGrid
+            });
+            throw new Error(error);
         }
+        
+        console.log('✅ LoadingManager initialization successful');
     }
 
     showLoading() {

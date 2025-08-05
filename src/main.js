@@ -3,10 +3,12 @@ import { App } from './App.js';
 let app;
 
 document.addEventListener('DOMContentLoaded', async () => {
+    console.log('🌐 DOM loaded - starting Pokemon App initialization...');
     try {
-        console.log('🚀 Initializing Pokemon App...');
+        console.log('🚀 Creating new App instance...');
         
         app = new App();
+        console.log('✅ App instance created:', app);
         
         app.on('app:ready', () => {
             console.log('✅ Pokemon App initialized successfully!');
@@ -18,9 +20,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
         window.pokemonApp = app;
+        console.log('✅ App assigned to window.pokemonApp');
         
     } catch (error) {
-        console.error('❌ Failed to initialize Pokemon App:', error);
+        console.error('❌ CRITICAL: Failed to initialize Pokemon App:', error);
+        console.error('Error details:', error.message);
+        console.error('Error stack:', error.stack);
     }
 });
 

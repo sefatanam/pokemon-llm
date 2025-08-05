@@ -64,8 +64,11 @@ export class PokemonAPI {
         const cacheKey = `pokemon-${identifier}`;
         
         try {
+            // Convert identifier to string and then toLowerCase for names only
+            const id = typeof identifier === 'string' ? identifier.toLowerCase() : identifier;
+            
             const data = await this.#fetchWithCache(
-                `${this.#baseUrl}/pokemon/${identifier.toLowerCase()}`,
+                `${this.#baseUrl}/pokemon/${id}`,
                 cacheKey
             );
             
@@ -76,39 +79,58 @@ export class PokemonAPI {
     }
 
     async getPokemonBatch(identifiers) {
-        const promises = identifiers.map(id => this.getPokemon(id));
+        console.log('🎯 getPokemonBatch called with', identifiers.length, 'identifiers');
+        
+        const promises = identifiers.map(id => {
+            console.log('🔍 Creating promise for Pokemon ID:', id);
+            return this.getPokemon(id);
+        });
         
         try {
+            console.log('⏳ Executing', promises.length, 'Pokemon fetch promises...');
             const results = await Promise.allSettled(promises);
             
-            return results
-                .filter(result => result.status === 'fulfilled')
+            const successfulResults = results
+                .filter(result => {
+                    if (result.status === 'fulfilled') {
+                        return true;
+                    } else {
+                        console.warn('⚠️ Failed to fetch Pokemon:', result.reason);
+                        return false;
+                    }
+                })
                 .map(result => result.value);
+            
+            console.log('✅ getPokemonBatch SUCCESS:', successfulResults.length, 'out of', identifiers.length, 'Pokemon fetched');
+            return successfulResults;
+            
         } catch (error) {
+            console.error('❌ CRITICAL ERROR in getPokemonBatch:', error);
             throw new Error(`Failed to fetch Pokemon batch: ${error.message}`);
         }
     }
 
     async getPokemonPage(page = 1, itemsPerPage = 50) {
-        const offset = (page - 1) * itemsPerPage;
-        const limit = Math.min(itemsPerPage, this.#totalPokemon - offset);
+        console.log('📄 SIMPLIFIED getPokemonPage - page:', page, 'items:', itemsPerPage);
         
-        if (offset >= this.#totalPokemon) {
-            return {
-                pokemon: [],
-                totalCount: this.#totalPokemon,
-                currentPage: page,
-                totalPages: Math.ceil(this.#totalPokemon / itemsPerPage)
-            };
-        }
-
         try {
-            const pokemonIds = Array.from(
-                { length: limit }, 
-                (_, i) => offset + i + 1
-            );
+            // Create array of Pokemon IDs to fetch (1-50 for first page)
+            const startId = ((page - 1) * itemsPerPage) + 1;
+            const endId = Math.min(startId + itemsPerPage - 1, this.#totalPokemon);
             
+            console.log('🎯 Fetching Pokemon IDs from', startId, 'to', endId);
+            
+            const pokemonIds = [];
+            for (let i = startId; i <= endId; i++) {
+                pokemonIds.push(i);
+            }
+            
+            console.log('📋 Pokemon IDs to fetch:', pokemonIds.slice(0, 10), '... (showing first 10)');
+            
+            // Fetch Pokemon data
             const pokemonData = await this.getPokemonBatch(pokemonIds);
+            
+            console.log('✅ SUCCESSFULLY fetched', pokemonData.length, 'Pokemon out of', pokemonIds.length, 'requested');
             
             return {
                 pokemon: pokemonData,
@@ -116,8 +138,10 @@ export class PokemonAPI {
                 currentPage: page,
                 totalPages: Math.ceil(this.#totalPokemon / itemsPerPage)
             };
+            
         } catch (error) {
-            throw new Error(`Failed to fetch Pokemon page: ${error.message}`);
+            console.error('❌ CRITICAL ERROR in getPokemonPage:', error);
+            throw error;
         }
     }
 
@@ -174,6 +198,8 @@ export class PokemonAPI {
     async getFilteredPokemon(filters = {}, page = 1, itemsPerPage = 50) {
         const { types = [], generation = '', stats = {} } = filters;
         
+        console.log('🎯 getFilteredPokemon called with filters:', filters);
+        
         let pokemonIds = [];
         
         if (generation) {
@@ -200,7 +226,8 @@ export class PokemonAPI {
             );
         }
 
-        if (stats.hp) {
+        // Only apply stat filters if they're not the default ranges
+        if (stats.hp && (stats.hp.min > 0 || stats.hp.max < 255)) {
             filteredPokemon = filteredPokemon.filter(pokemon => {
                 const hpStat = pokemon.stats.hp;
                 if (!hpStat) return true;
@@ -208,7 +235,7 @@ export class PokemonAPI {
             });
         }
 
-        if (stats.attack) {
+        if (stats.attack && (stats.attack.min > 0 || stats.attack.max < 255)) {
             filteredPokemon = filteredPokemon.filter(pokemon => {
                 const attackStat = pokemon.stats.attack;
                 if (!attackStat) return true;
@@ -230,7 +257,10 @@ export class PokemonAPI {
     }
 
     async getInitialPokemon(page = 1, itemsPerPage = 50) {
-        return this.getPokemonPage(page, itemsPerPage);
+        console.log('🚀 PokemonAPI.getInitialPokemon called with page:', page, 'itemsPerPage:', itemsPerPage);
+        const result = await this.getPokemonPage(page, itemsPerPage);
+        console.log('📦 getInitialPokemon result:', result);
+        return result;
     }
 
     getTotalPokemonCount() {
