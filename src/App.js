@@ -5,6 +5,7 @@ import { SearchManager } from './managers/SearchManager.js';
 import { LoadingManager } from './managers/LoadingManager.js';
 import { FilterManager } from './managers/FilterManager.js';
 import { PaginationManager } from './managers/PaginationManager.js';
+import { ThemeManager } from './managers/ThemeManager.js';
 
 export class App extends EventEmitter {
     #pokemonAPI;
@@ -12,6 +13,7 @@ export class App extends EventEmitter {
     #loadingManager;
     #filterManager;
     #paginationManager;
+    #themeManager;
     #pokemonCards = new Map();
     #currentPokemon = [];
     #currentFilters = {};
@@ -30,6 +32,7 @@ export class App extends EventEmitter {
             this.#searchManager = new SearchManager('searchInput');
             this.#filterManager = new FilterManager();
             this.#paginationManager = new PaginationManager(50);
+            this.#themeManager = new ThemeManager();
             
             this.#setupEventListeners();
             await this.#loadInitialPokemon();
@@ -180,6 +183,7 @@ export class App extends EventEmitter {
         this.#searchManager?.destroy();
         this.#filterManager?.destroy();
         this.#paginationManager?.destroy();
+        this.#themeManager = null;
         this.#pokemonCards.clear();
         this._events = {};
     }
@@ -227,5 +231,9 @@ export class App extends EventEmitter {
             hasFilters: this.#filterManager.hasActiveFilters(),
             hasSearch: this.#currentSearchQuery !== ''
         };
+    }
+
+    get themeManager() {
+        return this.#themeManager;
     }
 }
