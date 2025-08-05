@@ -3,13 +3,19 @@ import { PokemonAPI } from './services/PokemonAPI.js';
 import { PokemonCard } from './components/PokemonCard.js';
 import { SearchManager } from './managers/SearchManager.js';
 import { LoadingManager } from './managers/LoadingManager.js';
+import { FilterManager } from './managers/FilterManager.js';
+import { PaginationManager } from './managers/PaginationManager.js';
 
 export class App extends EventEmitter {
     #pokemonAPI;
     #searchManager;
     #loadingManager;
+    #filterManager;
+    #paginationManager;
     #pokemonCards = new Map();
     #currentPokemon = [];
+    #currentFilters = {};
+    #currentSearchQuery = '';
     #isInitialized = false;
 
     constructor() {
@@ -22,6 +28,8 @@ export class App extends EventEmitter {
             this.#pokemonAPI = PokemonAPI.getInstance();
             this.#loadingManager = new LoadingManager();
             this.#searchManager = new SearchManager('searchInput');
+            this.#filterManager = new FilterManager();
+            this.#paginationManager = new PaginationManager(50);
             
             this.#setupEventListeners();
             await this.#loadInitialPokemon();
@@ -37,11 +45,25 @@ export class App extends EventEmitter {
 
     #setupEventListeners() {
         this.#searchManager.on('search:query', async ({ query }) => {
-            await this.#handleSearch(query);
+            this.#currentSearchQuery = query;
+            this.#paginationManager.reset();
+            await this.#loadPokemonData();
         });
 
         this.#searchManager.on('search:clear', async () => {
-            await this.#loadInitialPokemon();
+            this.#currentSearchQuery = '';
+            this.#paginationManager.reset();
+            await this.#loadPokemonData();
+        });
+
+        this.#filterManager.on('filters:changed', async (filters) => {
+            this.#currentFilters = filters;
+            this.#paginationManager.reset();
+            await this.#loadPokemonData();
+        });
+
+        this.#paginationManager.on('pagination:pageChanged', async ({ page }) => {
+            await this.#loadPokemonData(page);
         });
 
         this.#loadingManager.on('error:show', ({ message }) => {
@@ -61,56 +83,67 @@ export class App extends EventEmitter {
     }
 
     async #loadInitialPokemon() {
+        await this.#loadPokemonData(1);
+    }
+
+    async #loadPokemonData(page = 1) {
         try {
             this.#loadingManager.showLoading();
             this.#loadingManager.setLoadingMessage('Loading Pokemon...');
             
-            const pokemon = await this.#pokemonAPI.getInitialPokemon(50);
+            let result;
+            
+            if (this.#currentSearchQuery) {
+                result = await this.#pokemonAPI.searchPokemonByName(
+                    this.#currentSearchQuery, 
+                    page, 
+                    this.#paginationManager.getItemsPerPage()
+                );
+            } else if (this.#filterManager.hasActiveFilters()) {
+                result = await this.#pokemonAPI.getFilteredPokemon(
+                    this.#currentFilters,
+                    page,
+                    this.#paginationManager.getItemsPerPage()
+                );
+            } else {
+                result = await this.#pokemonAPI.getInitialPokemon(
+                    page,
+                    this.#paginationManager.getItemsPerPage()
+                );
+            }
+
+            const { pokemon, totalCount } = result;
+            
             this.#currentPokemon = pokemon;
+            this.#paginationManager.setTotalItems(totalCount);
             
-            this.#renderPokemon(pokemon);
-            this.#loadingManager.hideLoading();
-            this.#loadingManager.removeLoadingMessage();
-            
-        } catch (error) {
-            console.error('Failed to load initial Pokemon:', error);
-            this.#loadingManager.showError('Failed to load Pokemon data. Please try again.');
-        }
-    }
-
-    async #handleSearch(query) {
-        if (!query || query.trim() === '') {
-            await this.#loadInitialPokemon();
-            return;
-        }
-
-        try {
-            this.#loadingManager.showLoading();
-            this.#loadingManager.setLoadingMessage(`Searching for "${query}"...`);
-            
-            const pokemon = await this.#pokemonAPI.searchPokemonByName(query);
-            
-            if (pokemon.length === 0) {
+            if (pokemon.length === 0 && totalCount === 0) {
                 this.#loadingManager.hideLoading();
                 this.#loadingManager.showNoResults();
                 this.#clearPokemonGrid();
+                this.#paginationManager.hide();
             } else {
-                this.#currentPokemon = pokemon;
                 this.#renderPokemon(pokemon);
                 this.#loadingManager.hideLoading();
                 this.#loadingManager.hideNoResults();
+                this.#paginationManager.show();
             }
             
             this.#loadingManager.removeLoadingMessage();
             
         } catch (error) {
-            console.error('Search failed:', error);
-            this.#loadingManager.showError(`Search failed: ${error.message}`);
+            console.error('Failed to load Pokemon:', error);
+            this.#loadingManager.showError('Failed to load Pokemon data. Please try again.');
+            this.#paginationManager.hide();
         }
     }
 
     #renderPokemon(pokemon) {
         this.#clearPokemonGrid();
+        
+        if (pokemon.length === 0) {
+            return;
+        }
         
         const fragment = document.createDocumentFragment();
         
@@ -119,8 +152,10 @@ export class App extends EventEmitter {
             this.#pokemonCards.set(poke.id, card);
             
             setTimeout(() => {
-                card.element.classList.add('fade-in');
-            }, index * 50);
+                if (card.element) {
+                    card.element.classList.add('fade-in');
+                }
+            }, index * 30);
             
             fragment.appendChild(card.render());
         });
@@ -137,11 +172,14 @@ export class App extends EventEmitter {
 
     async #refreshData() {
         this.#pokemonAPI.clearCache();
-        await this.#loadInitialPokemon();
+        this.#paginationManager.reset();
+        await this.#loadPokemonData();
     }
 
     #cleanup() {
         this.#searchManager?.destroy();
+        this.#filterManager?.destroy();
+        this.#paginationManager?.destroy();
         this.#pokemonCards.clear();
         this._events = {};
     }
@@ -162,6 +200,14 @@ export class App extends EventEmitter {
         this.#searchManager.clear();
     }
 
+    clearFilters() {
+        this.#filterManager.clearAllFilters();
+    }
+
+    goToPage(page) {
+        this.#paginationManager.goToPage(page);
+    }
+
     refresh() {
         return this.#refreshData();
     }
@@ -172,10 +218,14 @@ export class App extends EventEmitter {
 
     get stats() {
         return {
-            totalPokemon: this.#currentPokemon.length,
+            totalPokemon: this.#paginationManager.getTotalItems(),
+            currentPage: this.#paginationManager.getCurrentPage(),
+            totalPages: this.#paginationManager.getTotalPages(),
             cardsRendered: this.#pokemonCards.size,
             cacheSize: this.#pokemonAPI.getCacheSize(),
-            isLoading: this.#loadingManager.isLoading
+            isLoading: this.#loadingManager.isLoading,
+            hasFilters: this.#filterManager.hasActiveFilters(),
+            hasSearch: this.#currentSearchQuery !== ''
         };
     }
 }

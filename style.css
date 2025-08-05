@@ -4,6 +4,89 @@
     font-family: 'Inter', sans-serif;
 }
 
+/* Filter Sidebar Styles */
+.filter-sidebar {
+    height: calc(100vh - 4rem);
+}
+
+@media (max-width: 768px) {
+    .filter-sidebar {
+        height: calc(100vh - 4rem);
+        transform: translateX(100%);
+    }
+    
+    .filter-sidebar.open {
+        transform: translateX(0);
+    }
+    
+    #filterOverlay.show {
+        opacity: 1;
+        pointer-events: auto;
+    }
+}
+
+/* Filter Components */
+.filter-section {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 1.5rem;
+}
+
+.filter-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.type-filter-btn {
+    @apply px-3 py-2 text-xs font-medium rounded-lg border transition-all duration-200;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #374151;
+}
+
+.type-filter-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.type-filter-btn.active {
+    background: linear-gradient(135deg, #a855f7, #fb7185);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
+/* Range Slider Styles */
+input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #a855f7, #fb7185);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: linear-gradient(135deg, #a855f7, #fb7185);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Pokemon Card Styles */
 .pokemon-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     backdrop-filter: blur(20px);
@@ -35,6 +118,33 @@
     background: linear-gradient(90deg, var(--stat-color) 0%, var(--stat-color) var(--stat-width), rgba(255, 255, 255, 0.2) var(--stat-width), rgba(255, 255, 255, 0.2) 100%);
 }
 
+/* Pagination Styles */
+.page-btn {
+    @apply px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #374151;
+}
+
+.page-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.page-btn.active {
+    background: linear-gradient(135deg, #a855f7, #fb7185);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+}
+
+.page-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Loading Styles */
 .loading-shimmer {
     background: linear-gradient(90deg, rgba(255, 255, 255, 0.1) 25%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.1) 75%);
     background-size: 200% 100%;
@@ -63,4 +173,43 @@
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Mobile Responsive Adjustments */
+@media (max-width: 640px) {
+    .pokemon-card {
+        padding: 1rem;
+    }
+    
+    .pokemon-card:hover {
+        transform: translateY(-4px) scale(1.01);
+    }
+    
+    .type-filter-btn {
+        @apply px-2 py-1 text-xs;
+    }
+}
+
+/* Smooth scroll behavior */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #a855f7, #fb7185);
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(135deg, #9333ea, #f43f5e);
 }
