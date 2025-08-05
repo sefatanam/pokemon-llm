@@ -25,10 +25,22 @@
     <header class="backdrop-blur-md border-b sticky top-0 z-50" style="background: var(--bg-primary); border-color: var(--border-primary);">
         <div class="container mx-auto px-4 py-4">
             <div class="flex items-center justify-between">
-                <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-theme-purple to-theme-salmon bg-clip-text text-transparent">
-                    Pokemon Collection
+                <!-- Left spacer for centering -->
+                <div class="flex items-center gap-4 opacity-0 pointer-events-none">
+                    <button class="backdrop-blur-md border rounded-lg px-3 py-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                    </button>
+                    <button class="md:hidden backdrop-blur-md border rounded-lg px-4 py-2">
+                        <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.207A1 1 0 013 6.5V4z"></path></svg>
+                    </button>
+                </div>
+                
+                <!-- Centered Title -->
+                <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-theme-purple to-theme-salmon bg-clip-text text-transparent text-center">
+                    ⚡ PokéDex Master ⚡
                 </h1>
                 
+                <!-- Right Controls -->
                 <div class="flex items-center gap-4">
                     <!-- Dark Mode Toggle -->
                     <button 
