@@ -1,0 +1,29 @@
+{
+  "name": "pokemon-cards-app",
+  "version": "1.0.0",
+  "description": "Modern Pokemon card collection website built with vanilla JavaScript and TailwindCSS",
+  "type": "module",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "serve": "vite preview --port 3000"
+  },
+  "keywords": [
+    "pokemon",
+    "vanilla-javascript",
+    "tailwindcss",
+    "pokeapi",
+    "cards",
+    "responsive"
+  ],
+  "author": "Pokemon Cards Developer",
+  "license": "MIT",
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
