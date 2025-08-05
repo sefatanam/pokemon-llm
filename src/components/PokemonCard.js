@@ -27,7 +27,7 @@ export class PokemonCard {
         return `
             <div class="relative">
                 <div class="flex justify-between items-start mb-4">
-                    <span class="text-sm font-medium text-gray-600">#${this.#pokemon.id.toString().padStart(3, '0')}</span>
+                    <span class="text-sm font-medium text-gray-800">#${this.#pokemon.id.toString().padStart(3, '0')}</span>
                     <div class="flex gap-2">
                         ${types.map(type => `
                             <span class="type-badge px-3 py-1 rounded-full text-xs font-medium text-white capitalize">
@@ -47,7 +47,7 @@ export class PokemonCard {
                             onerror="this.src='/placeholder-pokemon.png'"
                         >
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 group-hover:text-white transition-colors">
+                    <h3 class="text-xl font-bold text-gray-900 group-hover:text-white transition-colors">
                         ${this.#pokemon.displayName}
                     </h3>
                 </div>
@@ -55,17 +55,17 @@ export class PokemonCard {
                 <div class="space-y-3">
                     <div class="grid grid-cols-2 gap-4 text-sm">
                         <div class="text-center">
-                            <div class="text-gray-600 group-hover:text-gray-300">Height</div>
-                            <div class="font-semibold text-gray-800 group-hover:text-white">${this.#pokemon.height}m</div>
+                            <div class="text-gray-700 group-hover:text-gray-200">Height</div>
+                            <div class="font-semibold text-gray-900 group-hover:text-white">${this.#pokemon.height}m</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-gray-600 group-hover:text-gray-300">Weight</div>
-                            <div class="font-semibold text-gray-800 group-hover:text-white">${this.#pokemon.weight}kg</div>
+                            <div class="text-gray-700 group-hover:text-gray-200">Weight</div>
+                            <div class="font-semibold text-gray-900 group-hover:text-white">${this.#pokemon.weight}kg</div>
                         </div>
                     </div>
 
                     <div class="pt-2">
-                        <h4 class="text-sm font-semibold text-gray-700 group-hover:text-gray-200 mb-3">Base Stats</h4>
+                        <h4 class="text-sm font-semibold text-gray-800 group-hover:text-gray-200 mb-3">Base Stats</h4>
                         <div class="space-y-2">
                             ${this.#generateStatsHTML(stats)}
                         </div>
@@ -84,7 +84,7 @@ export class PokemonCard {
                 const stat = stats[statKey];
                 return `
                     <div class="flex items-center gap-3">
-                        <span class="text-xs font-medium text-gray-600 group-hover:text-gray-300 w-12 text-right">
+                        <span class="text-xs font-medium text-gray-800 group-hover:text-gray-200 w-12 text-right">
                             ${stat.name}
                         </span>
                         <div class="flex-1 bg-white/20 rounded-full h-2 overflow-hidden">
@@ -97,7 +97,7 @@ export class PokemonCard {
                                 "
                             ></div>
                         </div>
-                        <span class="text-xs font-semibold text-gray-700 group-hover:text-white w-8">
+                        <span class="text-xs font-semibold text-gray-900 group-hover:text-white w-8">
                             ${stat.value}
                         </span>
                     </div>

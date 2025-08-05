@@ -38,21 +38,21 @@
 
 .type-filter-btn {
     @apply px-3 py-2 text-xs font-medium rounded-lg border transition-all duration-200;
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.2);
-    color: #374151;
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #111827;
 }
 
 .type-filter-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
 }
 
 .type-filter-btn.active {
-    background: linear-gradient(135deg, #a855f7, #fb7185);
+    background: linear-gradient(135deg, #8b5cf6, #f43f5e);
     color: white;
     border-color: transparent;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 /* Range Slider Styles */
@@ -70,7 +70,7 @@ input[type="range"]::-webkit-slider-thumb {
     appearance: none;
     width: 18px;
     height: 18px;
-    background: linear-gradient(135deg, #a855f7, #fb7185);
+    background: linear-gradient(135deg, #8b5cf6, #f43f5e);
     border-radius: 50%;
     cursor: pointer;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
@@ -79,7 +79,7 @@ input[type="range"]::-webkit-slider-thumb {
 input[type="range"]::-moz-range-thumb {
     width: 18px;
     height: 18px;
-    background: linear-gradient(135deg, #a855f7, #fb7185);
+    background: linear-gradient(135deg, #8b5cf6, #f43f5e);
     border-radius: 50%;
     cursor: pointer;
     border: none;
@@ -121,21 +121,21 @@ input[type="range"]::-moz-range-thumb {
 /* Pagination Styles */
 .page-btn {
     @apply px-3 py-2 text-sm font-medium rounded-lg transition-all duration-200;
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    color: #374151;
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #111827;
 }
 
 .page-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
 }
 
 .page-btn.active {
-    background: linear-gradient(135deg, #a855f7, #fb7185);
+    background: linear-gradient(135deg, #8b5cf6, #f43f5e);
     color: white;
     border-color: transparent;
-    box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
 }
 
 .page-btn:disabled {
